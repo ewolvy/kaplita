@@ -12,6 +12,7 @@ export default function Home() {
   const [glassStates, setGlassStates] = useState<boolean[]>(Array(8).fill(true));
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationShown, setCelebrationShown] = useState(false);
+  const [celebrationTimeout, setCelebrationTimeout] = useState<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -52,6 +53,15 @@ export default function Home() {
       });
     },
   });
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (celebrationTimeout) {
+        clearTimeout(celebrationTimeout);
+      }
+    };
+  }, [celebrationTimeout]);
 
   // Initialize glass states from server data
   useEffect(() => {
@@ -99,11 +109,22 @@ export default function Home() {
     });
   };
 
+  const dismissCelebration = () => {
+    // Clear any pending timeouts
+    if (celebrationTimeout) {
+      clearTimeout(celebrationTimeout);
+      setCelebrationTimeout(null);
+    }
+    
+    // Force close celebration
+    setShowCelebration(false);
+  };
+
   const resetAllGlasses = () => {
     // Reset to all full
     setGlassStates(Array(8).fill(true));
     // Reset celebration states
-    setShowCelebration(false);
+    dismissCelebration();
     setCelebrationShown(false);
     // Update server
     updateWaterLogMutation.mutate(0);
@@ -197,7 +218,7 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-              onClick={() => setShowCelebration(false)}
+              onClick={dismissCelebration}
             >
               <motion.div
                 initial={{ y: 50 }}
@@ -207,7 +228,7 @@ export default function Home() {
               >
                 {/* Close button */}
                 <button
-                  onClick={() => setShowCelebration(false)}
+                  onClick={dismissCelebration}
                   className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,7 +246,7 @@ export default function Home() {
                 
                 {/* Close button */}
                 <Button
-                  onClick={() => setShowCelebration(false)}
+                  onClick={dismissCelebration}
                   className="bg-gradient-to-r from-[hsl(199,89%,48%)] to-[hsl(217,91%,60%)] hover:from-[hsl(217,91%,60%)] hover:to-[hsl(224,76%,48%)] text-white"
                 >
                   Continue
