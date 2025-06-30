@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
 // Clean build script to ensure no cached files interfere
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 console.log('🧹 Cleaning build artifacts...');
 
