@@ -1,7 +1,0 @@
-0000000000000000000000000000000000000000 c27fffa43a01546705ae1aaaa21cca9ab25a0dc0 ewolvy <804429-ewolvy@users.noreply.replit.com> 1751267517 +0000	commit (initial): Initial commit
-c27fffa43a01546705ae1aaaa21cca9ab25a0dc0 bf930f44bd8573866ce9d4e03e0a85768d5d0c23 ewolvy <804429-ewolvy@users.noreply.replit.com> 1751267675 +0000	commit: Set up project structure and basic UI components for the app
-bf930f44bd8573866ce9d4e03e0a85768d5d0c23 83a1df09c2e3fd4fa49c6767f1782b0de4470a7e ewolvy <804429-ewolvy@users.noreply.replit.com> 1751267958 +0000	commit: Redesign logo and water glass to look more visually appealing and modern
-83a1df09c2e3fd4fa49c6767f1782b0de4470a7e 9c1002eca9b7284f3c9dbd46421a0e8c91242e6e ewolvy <804429-ewolvy@users.noreply.replit.com> 1751268338 +0000	commit: Adjust the logo to resemble a matrioshka doll and remembers daily progress
-9c1002eca9b7284f3c9dbd46421a0e8c91242e6e 016cfdc5dc76b1f7ea7eb7256bb7e08b15943276 ewolvy <804429-ewolvy@users.noreply.replit.com> 1751268489 +0000	commit: Adjust the Matrioshka logo to have a more traditional shape and add water tracking
-016cfdc5dc76b1f7ea7eb7256bb7e08b15943276 923c62314d2bda8f6c0a2e3ee6d54dd77b0125f9 ewolvy <804429-ewolvy@users.noreply.replit.com> 1751273421 +0000	commit: Allow users to easily dismiss the congratulations message after reaching goal
-923c62314d2bda8f6c0a2e3ee6d54dd77b0125f9 6859bcdc58d38f4e3d4c4149141ebbd4383a2881 ewolvy <804429-ewolvy@users.noreply.replit.com> 1751274738 +0000	commit: Prevent endless congratulatory messages after users reach hydration goal
