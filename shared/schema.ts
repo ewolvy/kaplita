@@ -10,6 +10,7 @@ export const users = pgTable("users", {
 
 export const dailyWaterLog = pgTable("daily_water_log", {
   id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
   date: date("date").notNull(),
   glassesConsumed: integer("glasses_consumed").notNull().default(0),
 });
@@ -20,6 +21,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const insertWaterLogSchema = createInsertSchema(dailyWaterLog).pick({
+  userId: true,
   date: true,
   glassesConsumed: true,
 });

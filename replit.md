@@ -94,6 +94,9 @@ users: {
 - June 30, 2025. Improved WaterGlass component with realistic 3D appearance, gradients, highlights, and shadows
 - June 30, 2025. Flipped matrioshka logo orientation to traditional shape (narrow head at top, wider body below)
 - June 30, 2025. Added daily water tracking with persistent storage and API integration
+- June 30, 2025. Fixed celebration modal dismissal issues with robust timeout management
+- June 30, 2025. Added individual user tracking using localStorage - each browser gets unique ID and personal records
+- June 30, 2025. Translated all interface text to Spanish with culturally appropriate user names
 
 ## User Preferences
 

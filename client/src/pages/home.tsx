@@ -7,6 +7,7 @@ import WaterGlass from "@/components/WaterGlass";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { getUserId, getUserDisplayName } from "@/lib/userStorage";
 
 export default function Home() {
   const [glassStates, setGlassStates] = useState<boolean[]>(Array(8).fill(true));
@@ -15,12 +16,16 @@ export default function Home() {
   const [celebrationTimeout, setCelebrationTimeout] = useState<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Get user identification
+  const userId = getUserId();
+  const userName = getUserDisplayName();
 
   // Fetch today's water log
   const { data: waterLog, isLoading } = useQuery({
-    queryKey: ['/api/water-log/today'],
+    queryKey: ['/api/water-log/today', userId],
     queryFn: async () => {
-      const response = await fetch('/api/water-log/today');
+      const response = await fetch(`/api/water-log/today?userId=${encodeURIComponent(userId)}`);
       return response.json();
     }
   });
@@ -30,7 +35,7 @@ export default function Home() {
     mutationFn: async (glassesConsumed: number) => {
       const response = await fetch('/api/water-log/today', {
         method: 'POST',
-        body: JSON.stringify({ glassesConsumed }),
+        body: JSON.stringify({ userId, glassesConsumed }),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -43,12 +48,12 @@ export default function Home() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/water-log/today'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/water-log/today', userId] });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to save your progress. Please try again.",
+        description: "No se pudo guardar tu progreso. Por favor intenta de nuevo.",
         variant: "destructive",
       });
     },
@@ -84,8 +89,8 @@ export default function Home() {
       setShowCelebration(true);
       setCelebrationShown(true);
       toast({
-        title: "🎉 Congratulations!",
-        description: "You've reached your daily hydration goal!",
+        title: "🎉 ¡Felicitaciones!",
+        description: "¡Has alcanzado tu meta diaria de hidratación!",
         duration: 5000,
       });
     }
@@ -145,7 +150,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
         <MatrioshkaLogo size={60} />
-        <p className="mt-4 text-slate-600">Loading your daily progress...</p>
+        <p className="mt-4 text-slate-600">Cargando tu progreso diario...</p>
       </div>
     );
   }
@@ -160,7 +165,7 @@ export default function Home() {
             <MatrioshkaLogo size={40} />
             <div>
               <h1 className="text-xl font-bold text-slate-800">Kaplita</h1>
-              <p className="text-xs text-slate-500">Water Tracker</p>
+              <p className="text-xs text-slate-500">¡Hola, {userName}!</p>
             </div>
           </div>
           
@@ -175,12 +180,12 @@ export default function Home() {
         <div className="bg-gradient-to-r from-[hsl(199,89%,48%)] to-[hsl(217,91%,60%)] rounded-2xl p-6 mb-8 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold mb-1">Daily Goal</h2>
-              <p className="text-blue-100 text-sm">Stay hydrated, stay healthy!</p>
+              <h2 className="text-lg font-semibold mb-1">Meta Diaria</h2>
+              <p className="text-blue-100 text-sm">¡Mantente hidratado, mantente saludable!</p>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold">{consumedCount}</div>
-              <div className="text-blue-200 text-sm">of 8 glasses</div>
+              <div className="text-blue-200 text-sm">de 8 vasos</div>
             </div>
           </div>
         </div>
@@ -203,10 +208,10 @@ export default function Home() {
             <span className="w-5 h-5 bg-[hsl(199,89%,48%)] rounded-full mr-2 flex items-center justify-center">
               <span className="text-white text-xs">💡</span>
             </span>
-            Hydration Tip
+            Consejo de Hidratación
           </h3>
           <p className="text-sm text-slate-600">
-            Drink a glass of water when you wake up to kickstart your metabolism and rehydrate your body.
+            Bebe un vaso de agua al despertar para activar tu metabolismo y rehidratar tu cuerpo.
           </p>
         </div>
 
@@ -238,10 +243,10 @@ export default function Home() {
                 
                 <div className="text-6xl mb-4">🎉</div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">
-                  Congratulations!
+                  ¡Felicitaciones!
                 </h2>
                 <p className="text-slate-600 mb-6">
-                  You've reached your daily hydration goal!
+                  ¡Has alcanzado tu meta diaria de hidratación!
                 </p>
                 
                 {/* Close button */}
@@ -249,7 +254,7 @@ export default function Home() {
                   onClick={dismissCelebration}
                   className="bg-gradient-to-r from-[hsl(199,89%,48%)] to-[hsl(217,91%,60%)] hover:from-[hsl(217,91%,60%)] hover:to-[hsl(224,76%,48%)] text-white"
                 >
-                  Continue
+                  Continuar
                 </Button>
               </motion.div>
             </motion.div>
@@ -262,7 +267,7 @@ export default function Home() {
         <div className="max-w-md mx-auto space-y-4">
           {/* Quick Stats */}
           <div className="flex justify-between text-sm text-slate-600">
-            <span>Today's Progress</span>
+            <span>Progreso de Hoy</span>
             <span>{percentage}%</span>
           </div>
           
@@ -274,7 +279,7 @@ export default function Home() {
           >
             <div className="flex items-center justify-center space-x-2">
               <span className="text-lg">🔄</span>
-              <span>Reset Daily Goal</span>
+              <span>Reiniciar Meta Diaria</span>
             </div>
           </Button>
         </div>

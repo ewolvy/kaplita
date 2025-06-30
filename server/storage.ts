@@ -7,19 +7,21 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  getTodayWaterLog(): Promise<WaterLog | undefined>;
-  updateTodayWaterLog(glassesConsumed: number): Promise<WaterLog>;
+  getTodayWaterLog(userId: string): Promise<WaterLog | undefined>;
+  updateTodayWaterLog(userId: string, glassesConsumed: number): Promise<WaterLog>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private waterLog: WaterLog | undefined;
+  private waterLogs: Map<string, WaterLog>; // key: userId-date
   currentId: number;
+  currentLogId: number;
 
   constructor() {
     this.users = new Map();
+    this.waterLogs = new Map();
     this.currentId = 1;
-    this.waterLog = undefined;
+    this.currentLogId = 1;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -39,27 +41,26 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async getTodayWaterLog(): Promise<WaterLog | undefined> {
+  async getTodayWaterLog(userId: string): Promise<WaterLog | undefined> {
     const today = new Date().toISOString().split('T')[0];
+    const key = `${userId}-${today}`;
     
-    // If no log exists or it's from a different day, return undefined
-    if (!this.waterLog || this.waterLog.date !== today) {
-      return undefined;
-    }
-    
-    return this.waterLog;
+    return this.waterLogs.get(key);
   }
 
-  async updateTodayWaterLog(glassesConsumed: number): Promise<WaterLog> {
+  async updateTodayWaterLog(userId: string, glassesConsumed: number): Promise<WaterLog> {
     const today = new Date().toISOString().split('T')[0];
+    const key = `${userId}-${today}`;
     
-    this.waterLog = {
-      id: 1, // Simple ID for in-memory storage
+    const waterLog: WaterLog = {
+      id: this.currentLogId++,
+      userId,
       date: today,
       glassesConsumed,
     };
     
-    return this.waterLog;
+    this.waterLogs.set(key, waterLog);
+    return waterLog;
   }
 }
 
