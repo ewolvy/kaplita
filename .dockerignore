@@ -1,0 +1,14 @@
+.git
+node_modules
+client/node_modules
+server/node_modules
+
+# Excluye todo dentro de dist...
+dist/**
+# ...pero vuelve a incluir sólo los estáticos finales
+!dist/public/**
+
+client/dist/**
+server/dist/**
+
+*.tgz
